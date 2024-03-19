@@ -58,13 +58,13 @@ The assignment requires the use of a data file named `data.pl`, which contains f
 
 ### 7. Justification for Boycotting an Item or Company
   - Provides the justification for boycotting a specific item or company.
-  Example:
+  **Example:**
 ``` prolog
   ?- whyToBoycott(dasani, Justification).
 ```
 ### 8. Remove Boycott Items from an Order
   - Removes all the boycott items from a specific order given the username and order ID.
-  Example:
+  **Example:**
   ```prolog
   ?- removeBoycottItemsFromAnOrder(abu_juliaa, 1, NewList).
   ```
@@ -76,7 +76,7 @@ The assignment requires the use of a data file named `data.pl`, which contains f
   ?- getTheDifferenceInPriceBetweenItemAndAlternative(lipton, Alternative, DiffPrice).
   ```
 
-###  10. Insert/Remove Item, Alternative, or New Boycott Company (Bonus)
+###  10. Insert/Remove Item, Alternative, or New Boycott Company
   - allowing insertion and removal of items, alternatives, and boycott companies from the knowledge base.
   **Examples:**
   ```prolog
@@ -87,4 +87,4 @@ The assignment requires the use of a data file named `data.pl`, which contains f
   ```
 
 ## License:
-This project is licensed under the [License Name] License - see the LICENSE.md file for details.
+This project is licensed under the [MIT] License - see the LICENSE.md file for details.
