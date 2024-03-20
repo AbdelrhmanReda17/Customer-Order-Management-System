@@ -36,3 +36,19 @@ remove_boycottCompany(CompanyName) :-
     retract(boycott_company(CompanyName, _)).
 
 
+
+%Get the num of items in a specific customer order given customer
+Name and order id.
+
+getNumOfItems(Name,OrderNum,Count) :-
+    customer(Id, Name),
+    order(Id, OrderNum, Items),
+    len(Items, Count).
+
+len([],0).
+
+len([_|Tail], Count) :- 
+    len(Tail, Y),  
+    Count is Y + 1.
+
+
