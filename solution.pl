@@ -66,7 +66,7 @@ removeBoycottItems([H|T], NewList) :-
     removeBoycottItems(T , Remaining)).
 
 
-% 1. List all items in a specific customer order given customer id and order id.
+% 3. List all items in a specific customer order given customer id and order id.
 
 getItemsInOrderById(CustomerId,OrderdId,Items):-
     order(CustomerId,OrderdId,Items).
