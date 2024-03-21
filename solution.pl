@@ -37,8 +37,7 @@ remove_boycottCompany(CompanyName) :-
 
 
 
-%Get the num of items in a specific customer order given customer
-Name and order id.
+% 4. Get the num of items in a specific customer order given customer Name and order id.
 
 getNumOfItems(Name,OrderNum,Count) :-
     customer(Id, Name),
@@ -50,5 +49,21 @@ len([],0).
 len([_|Tail], Count) :- 
     len(Tail, Y),  
     Count is Y + 1.
+
+
+% 8. Given an username and order ID, remove all the boycott items from this order.
+
+removeBoycottItemsFromAnOrder(Name, OrderNum, NewList) :-
+    customer(Id,Name),
+    order(Id, OrderNum, List),
+    removeBoycottItems(List, NewList).
+
+removeBoycottItems([], []).
+
+removeBoycottItems([H|T], NewList) :-
+    (isBoycott(H) ->  removeBoycottItems(T, NewList);
+    NewList = [H|Remaining],
+    removeBoycottItems(T , Remaining)).
+
 
 
