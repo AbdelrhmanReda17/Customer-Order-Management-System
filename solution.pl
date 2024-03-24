@@ -83,6 +83,39 @@ removeBoycottItems([H|T], NewList) :-
     NewList = [H|Remaining],
     removeBoycottItems(T , Remaining)).
 
+% 9. Given an username and order ID, update the order such that all
+% boycott items are replaced by an alternative (if exists).
+
+replaceBoycottItemsFromAnOrder(CustUsername, OrderId, NewItems):-
+    customer(CustomerId, CustUsername),
+    order(CustomerId, OrderId, Items),
+    replaceBoycottItems(Items, NewItems).
+
+replaceBoycottItems([], []).
+
+replaceBoycottItems([H|T], NewItems):-
+    % if (H) is a Boycott items
+    (isBoycott(H) -> alternative(H, AlternativeItem),
+    NewItems = [AlternativeItem|Remaining],
+    replaceBoycottItems(T, Remaining);
+    % else
+    NewItems = [H|Remaining],
+    replaceBoycottItems(T, Remaining)).
+
+
+% 10. Given an username and order ID, calculate the price of the order after
+% replacing all boycott items by its alternative (if it exists).
+
+calcPriceAfterReplacingBoycottItemsFromAnOrder(CustUsername, OrderId, NewItems, TotalPrice):-
+    replaceBoycottItemsFromAnOrder(CustUsername, OrderId, NewItems),
+    calcPrice(NewItems, 0, TotalPrice).
+
+calcPrice([], AccPrice, AccPrice).
+
+calcPrice([H|T], AccPrice, TotalPrice):-
+    item(H, _, Price),
+    NewAccPrice is AccPrice + Price,
+    calcPrice(T, NewAccPrice, TotalPrice).
 
 
 
