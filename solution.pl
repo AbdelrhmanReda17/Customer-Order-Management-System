@@ -36,6 +36,18 @@ len([_|Tail], Count) :-
     len(Tail, Y),  
     Count is Y + 1.
 
+% 5. Calculate the price of a given order given Customer Name and order id
+calcPriceOfOrder(CustomerName, OrderID, TotalPrice) :-
+    customer(CustomerID, CustomerName),
+    getItemsInOrderByOrder(CustomerID, OrderID, Items),
+    sumItemsPrice(Items, TotalPrice).
+
+% Sum up the prices of all items in the list
+sumItemsPrice([], 0).
+sumItemsPrice([ItemName|Remaining], TotalPrice) :-
+    item(ItemName, _, Price),
+    sumItemsPrice(Remaining, RemainingPrice),
+    TotalPrice is RemainingPrice + Price.
 
 % 6. Given the item name or company name, determine whether we need to boycott or not.
 isBoycott(CompanyName) :-
