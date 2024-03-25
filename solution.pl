@@ -16,6 +16,15 @@ orders_by_customer(CustomerId, OrdersAcc, [H|T]) :-
 
 orders_by_customer(_, _, []).
 
+% 2.Get the number of orders of a specific customer given customer id.
+countOrdersOfCustomer(CustomerName, Count) :-
+    list_orders(CustomerName, Orders),
+    count_list(Orders, Count).
+    
+count_list([], 0).
+count_list([_|Tail], Count) :-
+    count_list(Tail, Counter),
+    Count is Counter + 1.
 
 % 3. List all items in a specific customer order given customer id and order id.
 
