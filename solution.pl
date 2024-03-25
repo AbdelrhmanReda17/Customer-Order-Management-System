@@ -10,11 +10,16 @@ list_orders(CustomerName,Orders) :-
     
 orders_by_customer(CustomerId, OrdersAcc, [H|T]) :-
     order(CustomerId,OrderId,Items),
-    \+ member(order(CustomerId,OrderId,_), OrdersAcc),
+    \+ isMember(order(CustomerId,OrderId,_), OrdersAcc),
     H=order(CustomerId, OrderId, Items),
     orders_by_customer(CustomerId,[H|OrdersAcc],T).
 
 orders_by_customer(_, _, []).
+
+% Checks if X is in the List or No
+isMember(X, [X|_]).
+isMember(X, [_|T]) :-
+    isMember(X, T).
 
 % 2.Get the number of orders of a specific customer given customer id.
 countOrdersOfCustomer(CustomerName, Count) :-
