@@ -7,11 +7,11 @@
 list_orders(CustomerName,Orders) :-
     customer(CustomerId, CustomerName),
     orders_by_customer(CustomerId,[],Orders).
-    
+
 orders_by_customer(CustomerId, OrdersAcc, [H|T]) :-
     order(CustomerId,OrderId,Items),
     \+ isMember(order(CustomerId,OrderId,_), OrdersAcc),
-    H=order(CustomerId, OrderId, Items),
+    H = order(CustomerId, OrderId, Items),
     orders_by_customer(CustomerId,[H|OrdersAcc],T).
 
 orders_by_customer(_, _, []).
@@ -25,45 +25,24 @@ isMember(X, [_|T]) :-
 countOrdersOfCustomer(CustomerName, Count) :-
     list_orders(CustomerName, Orders),
     count_list(Orders, Count).
-    
-count_list([], 0).
-count_list([_|Tail], Count) :-
-    count_list(Tail, Counter),
-    Count is Counter + 1.
 
 % 3. List all items in a specific customer order given customer id and order id.
 
-getItemsInOrderById(CustomerId,OrderdId,Items):-
-    order(CustomerId,OrderdId,Items).
-
+getItemsInOrderById(CustomerName,OrderdID,Items):-
+    customer(CustomerID, CustomerName),
+    order(CustomerID,OrderdID,Items).
 
 % 4. Get the num of items in a specific customer order given customer Name and order id.
 
-getNumOfItems(Name,OrderNum,Count) :-
-    customer(Id, Name),
-    order(Id, OrderNum, Items),
-    len(Items, Count).
-
-len([],0).
-
-len([_|Tail], Count) :- 
-    len(Tail, Y),  
-    Count is Y + 1.
-
+getNumOfItems(CustomerName,OrderID,Count) :-
+    customer(CustomerID, CustomerName),
+    order(CustomerID, OrderID, Items),
+    count_list(Items, Count).
 
 % 5. Calculate the price of a given order given Customer Name and order id
 calcPriceOfOrder(CustomerName, OrderID, TotalPrice) :-
-    customer(CustomerID, CustomerName),
-    getItemsInOrderByOrder(CustomerID, OrderID, Items),
+    getItemsInOrderById(CustomerName, OrderID, Items),
     sumItemsPrice(Items, TotalPrice).
-
-% Sum up the prices of all items in the list
-sumItemsPrice([], 0).
-
-sumItemsPrice([ItemName|Remaining], TotalPrice) :-
-    item(ItemName, _, Price),
-    sumItemsPrice(Remaining, RemainingPrice),
-    TotalPrice is RemainingPrice + Price.
 
 
 % 6. Given the item name or company name, determine whether we need to boycott or not.
@@ -73,13 +52,12 @@ isBoycott(ItemName) :-
     item(ItemName,CompanyName,_),
     boycott_company(CompanyName, _).
 
-
-% 7.Given the company name or an item name, find the justification why you need to boycott this company/item. 
-
+% 7.Given the company name or an item name, find the justification why you need to boycott this company/item.
+whyToBoycott(CompanyName, Justification) :-
+    boycott_company(CompanyName, Justification).
 whyToBoycott(ItemName, Justification) :-
     item(ItemName, CompanyName, _),
-    boycott_company(CompanyName, Justification).   
-
+    boycott_company(CompanyName, Justification).
 
 % 8. Given an username and order ID, remove all the boycott items from this order.
 
@@ -114,25 +92,16 @@ replaceBoycottItems([H|T], NewItems):-
     NewItems = [H|Remaining],
     replaceBoycottItems(T, Remaining)).
 
-
 % 10. Given an username and order ID, calculate the price of the order after
 % replacing all boycott items by its alternative (if it exists).
 
 calcPriceAfterReplacingBoycottItemsFromAnOrder(CustUsername, OrderId, NewItems, TotalPrice):-
     replaceBoycottItemsFromAnOrder(CustUsername, OrderId, NewItems),
-    calcPrice(NewItems, 0, TotalPrice).
-
-calcPrice([], AccPrice, AccPrice).
-
-calcPrice([H|T], AccPrice, TotalPrice):-
-    item(H, _, Price),
-    NewAccPrice is AccPrice + Price,
-    calcPrice(T, NewAccPrice, TotalPrice).
-
+    sumItemsPrice(NewItems, TotalPrice).
 
 % 11.calculate the difference in price between the boycott item and its alternative.
 
- getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, DiffPrice) :-
+getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, DiffPrice) :-
     item(ItemName, _, ItemPrice),
     alternative(ItemName, Alternative),
     item(Alternative, _, AltPrice),
@@ -145,8 +114,8 @@ add_item(ItemName, CompanyName, Price) :-
     assert(item(ItemName, CompanyName, Price)).
 
 % Remove an item
-remove_item(ItemName) :-
-    retract(item(ItemName, _, _)).
+remove_item(ItemName , CompanyName , Price) :-
+    retract(item(ItemName, CompanyName, Price)).
 
 % Insert a new alternative
 insert_alternative(ItemName, AlternativeItem) :-
@@ -161,12 +130,21 @@ insert_boycottCompany(CompanyName, Justification) :-
     assert(boycott_company(CompanyName, Justification)).
 
 % Remove a boycott company
-remove_boycottCompany(CompanyName) :-
-    retract(boycott_company(CompanyName, _)).
+remove_boycottCompany(CompanyName ,Justification ) :-
+    retract(boycott_company(CompanyName, Justification)).
 
 
+% COMMON
+% Count length
+count_list([], 0).
+count_list([_|Tail], Count) :-
+    count_list(Tail, Counter),
+    Count is Counter + 1.
 
+% Sum up the prices of all items in the list
+sumItemsPrice([], 0).
 
-
-
-
+sumItemsPrice([ItemName|Remaining], TotalPrice) :-
+    item(ItemName, _, Price),
+    sumItemsPrice(Remaining, RemainingPrice),
+    TotalPrice is RemainingPrice + Price.
